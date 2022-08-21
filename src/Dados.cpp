@@ -31,31 +31,32 @@ Dados::~Dados()
 
 int Dados::particione(int pi, int pf)
 {
-    // TODO: implementar funcao de particionamento
-    // do subarray que vai da posicao inicial pi até posicao final pf
-    // e que apos particionar os dados, retorna a posicao do pivo
+    int pivo, i, j;
 
-    int pivo;
+    i = pi + 1;
+    j = pf;
+    pivo = pi;
 
+    while (j > i) {
+        while ((registros[i] <= registros[pivo]) && (i < pf)) i++;
+        while ((registros[j] >  registros[pivo]) && (j > pi)) j--;
+        if ((i < j) && (registros[i] > registros[j])) troca(registros[i], registros[j]);
+    }
 
+    if (registros[j] < registros[pivo]) troca(registros[j], registros[pivo]);
 
-
-
-
-
-    return pivo;
+    return j;
 }
 
 void Dados::quickSort(int i, int f)
 {
-    // TODO: implementar funcao recursiva de quicksort que chama particionamento
+    int pivo;
 
-
-
-
-
-
-
+    if (f > i) {
+        pivo = particione(i, f);
+        quickSort(i, pivo - 1);
+        quickSort(pivo, f);
+    }
 }
 
 Estatisticas Dados::ordenaComQuickSort()
