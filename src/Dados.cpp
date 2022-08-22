@@ -38,12 +38,35 @@ int Dados::particione(int pi, int pf)
     pivo = pi;
 
     while (j > i) {
-        while ((registros[i] <= registros[pivo]) && (i < pf)) i++;
-        while ((registros[j] >  registros[pivo]) && (j > pi)) j--;
-        if ((i < j) && (registros[i] > registros[j])) troca(registros[i], registros[j]);
+        // while ((i < pf) && (registros[i] <= registros[pivo])) i++;
+        while (i < pf) {
+            estatisticasTotais.comparacoes++;
+            if (registros[i] > registros[pivo])
+                break;
+            i++;
+        }
+
+        // while ((j > pi) && (registros[j] >  registros[pivo])) j--;
+        while (j > pi) {
+            estatisticasTotais.comparacoes++;
+            if (registros[j] <=  registros[pivo])
+                break;
+            j--;
+        }
+
+        if (i < j) {
+            estatisticasTotais.trocas++;
+            if (registros[i] > registros[j]) {
+                troca(registros[i], registros[j]);
+            }
+        }
     }
 
-    if (registros[j] < registros[pivo]) troca(registros[j], registros[pivo]);
+    estatisticasTotais.trocas++;
+    if (registros[j] < registros[pivo]) {
+        estatisticasTotais.trocas++;
+        troca(registros[j], registros[pivo]);
+    };
 
     return j;
 }
@@ -55,7 +78,7 @@ void Dados::quickSort(int i, int f)
     if (f > i) {
         pivo = particione(i, f);
         quickSort(i, pivo - 1);
-        quickSort(pivo, f);
+        quickSort(pivo + 1, f);
     }
 }
 
@@ -71,17 +94,31 @@ Estatisticas Dados::ordenaComQuickSort()
 
 void Dados::heapify(int i)
 {
-    // TODO: implementar funcao de heapificação.
-    // o tamanho da heap é descrito por 'heapSize',
-    // para obter os indices dos filhos de um nodo i
-    // usar 'filhoEsquerdoHeap(i)' e 'filhoDireitoHeap(i)'
+    int e, d, maior;
 
+    e = filhoEsquerdoHeap(i);
+    d = filhoDireitoHeap(i);
+    maior = i;
 
+    if (e < heapSize) {
+        estatisticasTotais.comparacoes++;
+        if (registros[e] > registros[maior]) {
+            maior = e;
+        }
+    }
 
+    if (d < heapSize) {
+        estatisticasTotais.comparacoes++;
+        if (registros[d] > registros[maior]) {
+            maior = d;
+        }
+    }
 
-
-
-
+    if (maior != i) {
+        estatisticasTotais.trocas++;
+        troca(registros[i], registros[maior]);
+        heapify(maior);
+    }
 }
 
 void Dados::buildHeap()
@@ -99,36 +136,38 @@ Estatisticas Dados::ordenaComHeapSort()
     heapSize = 0;
 
     // TODO: implementar funcao de heapsort chamando buildHeap() e heapify(i)
-
-
-
-
-
-
-
-
+    buildHeap();
+    for (int i = heapSize - 1; i >= 1; i--) {
+        estatisticasTotais.trocas++;
+        troca(registros[i], registros[0]);
+        heapSize--;
+        heapify(0);
+    }
 
     return estatisticasTotais;
 }
 
 void Dados::ordenaComCountingSort(int K)
 {
-    estatisticasTotais.trocas = 0;
-    estatisticasTotais.comparacoes = 0;
+    std::vector<long> acumulador(K+1, 0);
+    std::vector<Registro> entrada(registros);
 
-    // TODO: implementar funcao de ordenacao por contagem
+    for (int i = 0; i < entrada.size(); i++) {
+        acumulador[entrada[i].getChave()]++;
+    }
 
+    for (int i = 1; i < K+1; i++) {
+        int val = (acumulador[i] + acumulador[i - 1]);
+        acumulador[i] = val;
+    }
 
+    for (int j = entrada.size() - 1; j >= 0; j--) {
+        int chave = entrada[j].getChave();
+        int indice = acumulador[chave]-1;
 
-
-
-
-
-
-
-
-
-
+        registros[indice] = entrada[j];
+        acumulador[chave]--;
+    }
 
 }
 

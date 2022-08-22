@@ -40,9 +40,9 @@ int main()
 
         /// MÉTODOS DO LAB 2 ///
 
-        est = dados.ordenaComQuickSort();
+//        est = dados.ordenaComQuickSort();
 //        est = dados.ordenaComHeapSort();
-//        dados.ordenaComCountingSort(VALOR_MAXIMO);
+        dados.ordenaComCountingSort(VALOR_MAXIMO);
 
         tempo = timer.finalizaContagem();
 
