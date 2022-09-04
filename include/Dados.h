@@ -7,6 +7,8 @@
 #include "../include/Registro.h"
 #include "../include/Utils.h"
 
+extern bool pivoAleatorio;
+
 enum TipoShellSort { SHELL59, KNUTH71, TOKUDA92, CIURA01};
 
 class Dados
@@ -76,6 +78,8 @@ class Dados
         // funcao auxiliar que realiza a troca dos valores de dois registros
         void troca(Registro &x, Registro &y);
 
+
+        int gerarPivoAleatorio(int xi, int xf);
 };
 
 #endif // DADOS_H

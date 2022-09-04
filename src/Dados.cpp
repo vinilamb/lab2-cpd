@@ -3,6 +3,13 @@
 #include <iostream>     // std::cout
 #include <algorithm>    // std::sort
 
+bool pivoAleatorio = false;
+
+int Dados::gerarPivoAleatorio(int xi, int xf)
+{
+    std::uniform_int_distribution<int> numero_aleatorio(xi, xf);
+    return numero_aleatorio(*gerador);
+}
 
 //////////////////////////////////
 /// CONSTRUTORES E DESTRUTORES ///
@@ -32,13 +39,20 @@ Dados::~Dados()
 int Dados::particione(int pi, int pf)
 {
     int pivo, i, j;
+    //int initSize = registros.size();
 
-    i = pi + 1;
-    j = pf;
-    pivo = pi;
+    if (pivoAleatorio) {
+        i = pi;
+        j = pf;
+        pivo = gerarPivoAleatorio(pi, pf);
+    }
+    else {
+        i = pi + 1;
+        j = pf;
+        pivo = pi;
+    }
 
     while (j > i) {
-        // while ((i < pf) && (registros[i] <= registros[pivo])) i++;
         while (i < pf) {
             estatisticasTotais.comparacoes++;
             if (registros[i] > registros[pivo])
@@ -46,7 +60,6 @@ int Dados::particione(int pi, int pf)
             i++;
         }
 
-        // while ((j > pi) && (registros[j] >  registros[pivo])) j--;
         while (j > pi) {
             estatisticasTotais.comparacoes++;
             if (registros[j] <=  registros[pivo])
@@ -62,11 +75,10 @@ int Dados::particione(int pi, int pf)
         }
     }
 
-    estatisticasTotais.trocas++;
     if (registros[j] < registros[pivo]) {
         estatisticasTotais.trocas++;
         troca(registros[j], registros[pivo]);
-    };
+    }
 
     return j;
 }
@@ -74,7 +86,6 @@ int Dados::particione(int pi, int pf)
 void Dados::quickSort(int i, int f)
 {
     int pivo;
-
     if (f > i) {
         pivo = particione(i, f);
         quickSort(i, pivo - 1);
@@ -152,7 +163,7 @@ void Dados::ordenaComCountingSort(int K)
     std::vector<long> acumulador(K+1, 0);
     std::vector<Registro> entrada(registros);
 
-    for (int i = 0; i < entrada.size(); i++) {
+    for (size_t i = 0; i < entrada.size(); i++) {
         acumulador[entrada[i].getChave()]++;
     }
 
@@ -241,11 +252,13 @@ bool Dados::checaSeOrdenacaoFoiEstavel()
     bool ehEstavel=true;
 
     // TODO: checar se elementos com chave igual mantem a ordem inicial analisando seus dados satelites
-
-
-
-
-
+    for (std::size_t i = 0; i < registros.size() - 1; i++) {
+        if ((registros[i] == registros[i + 1]) && (registros[i].getDadoSatelite() > registros[i + 1].getDadoSatelite()))
+        {
+            ehEstavel = false;
+            break;
+        }
+    }
 
     return ehEstavel;
 }
